@@ -11,6 +11,19 @@ class TestPrimeUtil < MiniTest::Unit::TestCase
     assert_equal false, PrimeUtil.prime?(1)
   end
   
+  def test_that_negative_one_is_not_a_prime
+    assert_equal false, PrimeUtil.prime?(-1)
+  end
+  
+  def test_that_some_big_number_is_not_a_prime
+    assert_equal false, PrimeUtil.prime?(175634)
+  end
+  
+  # sum of digits is divisable by 3
+  def test_that_some_other_big_number_is_not_a_prime
+    assert_equal false, PrimeUtil.prime?(453969)
+  end
+  
   def test_that_two_is_a_prime
     assert_equal true, PrimeUtil.prime?(2)
   end
@@ -24,11 +37,11 @@ class TestPrimeUtil < MiniTest::Unit::TestCase
     assert_equal ten_primes, PrimeUtil.first(10)
   end
   
-  def bench_first_n_primes
-    assert_performance_linear 0.99 do |n|
-      n.times do
-        PrimeUtil.first(10)
-      end
-    end
+  def test_that_negative_n_primes_is_blank
+    assert_equal [], PrimeUtil.first(-10)
+  end
+  
+  def test_non_integer_input
+    assert_equal [], PrimeUtil.first("abc")
   end
 end

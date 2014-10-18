@@ -4,7 +4,7 @@ require_relative 'lib/prime_util'
 
 n = ARGV[0].to_i
 
-if n == 0
+if n < 1
   puts "Please specify an integer between 1..n. Exiting..."
   exit
 end

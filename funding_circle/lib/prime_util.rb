@@ -6,6 +6,7 @@ class PrimeUtil
     
     # Run through some basic prime checks before executing
     # a more brute force method
+    return false if num < 0
     return false if [0, 1].include?(num)
     return true if [2, 3].include?(num)
     
@@ -27,9 +28,11 @@ class PrimeUtil
   end
   
   # returns an array of first n primes
-  def self.first(n)
+  def self.first(n)    
     primes = []
     i = 1
+    
+    n = Integer(n) rescue 0
     
     while primes.size < n
       primes << i if self.prime?(i)
