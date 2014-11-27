@@ -1,0 +1,27 @@
+<h1>Listing urls</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Long URL</th>
+      <th>Short URL</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @urls.each do |url| %>
+      <tr>
+        <td><%= url.long_url %></td>
+        <td><%= url.short_url %></td>
+        <td><%= link_to 'Show', url, class: "btn btn-primary btn-xs" %></td>
+        <td><%= link_to 'Edit', edit_url_path(url), class: "btn btn-info btn-xs" %></td>
+        <td><%= link_to 'Destroy', url, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger btn-xs" %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'Shorten a new URL', new_url_path, class: "btn btn-primary" %>

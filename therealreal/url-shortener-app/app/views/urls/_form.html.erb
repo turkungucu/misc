@@ -1,0 +1,19 @@
+<%= form_for(@url) do |f| %>
+  <% if @url.errors.any? %>
+  	<div class="alert alert-danger" role="alert">
+	  <ul>
+      <% @url.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+	</div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :long_url %>
+    <%= f.text_field :long_url, class: "form-control" %>
+  </div>
+
+  <%= f.submit 'Shorten', class: "btn btn-primary" %> 
+  <%= link_to 'Back', urls_path, class: "btn btn-default" %>
+<% end %>

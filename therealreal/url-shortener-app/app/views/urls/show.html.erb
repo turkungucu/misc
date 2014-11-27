@@ -1,0 +1,14 @@
+<pre class="bg-success spacer"><%= notice %></pre>
+
+<p>
+  <strong>Long URL:</strong>
+  <%= @url.long_url %>
+</p>
+
+<p>
+  <strong>Short URL:</strong>
+  <%= @url.short_url %>
+</p>
+
+<%= link_to 'Edit', edit_url_path(@url), class: "btn btn-primary" %> 
+<%= link_to 'Back', urls_path, class: "btn btn-default" %>
