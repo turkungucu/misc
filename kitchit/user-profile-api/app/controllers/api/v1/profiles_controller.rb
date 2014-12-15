@@ -40,7 +40,9 @@ module Api
       
       # Whitelisting attributes to return. DB id is replaced by public_id.
       def serialize(profile)
-        {id: profile.public_id, name: profile.name, email: profile.email, tagline: profile.tagline}
+        h = {id: profile.public_id, name: profile.name, email: profile.email, tagline: profile.tagline}
+        h[:avatar_id] = profile.image.public_id if profile.image
+        h
       end
     end
   end

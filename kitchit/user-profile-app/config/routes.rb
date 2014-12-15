@@ -6,6 +6,8 @@ Rails.application.routes.draw do
 
   # You can have the root of your site routed with "root"
   root 'profiles#index'
+  
+  get 'avatar/:id' => 'profiles#avatar', as: :avatar
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

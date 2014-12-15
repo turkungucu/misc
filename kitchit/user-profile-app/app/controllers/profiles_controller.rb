@@ -6,7 +6,7 @@ class ProfilesController < ApplicationController
 
   # GET /profiles
   def index
-    response = RestClient.get "#{base_api_url}/api/v1/profiles"
+    response = RestClient.get "#{api_url}/profiles"
     @profiles = JSON.parse(response).each_with_object([]) {|j, a| a << Profile.new(j) }
   end
 
@@ -40,12 +40,19 @@ class ProfilesController < ApplicationController
       render :edit
     end
   end
+  
+  # GET /avatar/:id
+  def avatar
+     # app-level default is to get thumbnail
+     response = RestClient.get "#{api_url}/avatar/#{params[:id]}", { params: { size: (params[:size] || 'thumb') } }
+     redirect_to JSON.parse(response)["url"]
+  end
 
   private
   
   # Use callbacks to share common setup or constraints between actions.
   def set_profile
-    response = RestClient.get "#{base_api_url}/api/v1/profile/#{params[:id]}"
+    response = RestClient.get "#{api_url}/profile/#{params[:id]}"
     @profile = Profile.new(JSON.parse(response))
   end
 
@@ -54,22 +61,38 @@ class ProfilesController < ApplicationController
     params.require(:profile).permit(:name, :email, :tagline, :avatar)
   end
   
-  def base_api_url
-    ENV['BASE_API_URL'] || "http://localhost:3000"
-  end
-  
   def persist_profile
     file = profile_params.delete :avatar
-    profile_response = RestClient.post "#{base_api_url}/api/v1/profile/update", params
+    profile_response = RestClient.post "#{api_url}/profile/update", params
     
-    if profile_response.success? 
+    if profile_response.success?
+      # build transient object from params
       @profile = Profile.new(profile_params)
-      
+      @profile.id = params[:id] if params[:id]
+
       # persist the avatar
       if file
-        image_response = RestClient.post("#{base_api_url}/api/v1/avatar/upload", {
-          image: {avatar: File.new(file.path, 'rb'), profile_id: @profile.id}
-        })
+        
+        f= File.new(file.path, 'rb')
+        f.instance_eval do
+          def content_type
+            'image/jpeg'
+          end
+        end
+        
+        image_response = RestClient::Request.new(
+          :method => "post",
+          :url => "#{api_url}/avatar/upload",       
+          :payload => {'image[avatar]' => f, 'image[profile_id]' => @profile.id},
+          :headers => { :accept => :json, :content_type => :json}
+        ).execute
+        
+        @profile.avatar_id = JSON.parse(image_response)[:id]
+        
+        # image_response = RestClient.post("#{base_api_url}/api/v1/avatar/upload", 
+          # {image: {avatar: File.new(file.path, 'rb'), profile_id: @profile.id}}, 
+          # content_type: 'image/jpeg', accept: :json
+        # )
       end
     end
   end

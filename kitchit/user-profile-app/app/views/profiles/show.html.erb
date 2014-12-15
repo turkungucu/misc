@@ -21,6 +21,6 @@
   <dd><%= @profile.tagline %></dd>
 
   <dt>Avatar:</dt>
-  <dd><%= @profile.avatar %></dd>
+  <dd><%= image_tag avatar_path(@profile.avatar_id) if @profile.avatar_id %></dd>
 
 </dl>
