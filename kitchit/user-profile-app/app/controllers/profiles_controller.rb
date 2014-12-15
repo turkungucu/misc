@@ -47,6 +47,14 @@ class ProfilesController < ApplicationController
      response = RestClient.get "#{api_url}/avatar/#{params[:id]}", { params: { size: (params[:size] || 'thumb') } }
      redirect_to JSON.parse(response)["url"]
   end
+  
+  # GET /profiles/search?term=
+  def search
+    response = RestClient.get "#{api_url}/profile/search", { params: search_params }
+    @profiles = JSON.parse(response).each_with_object([]) {|j, a| a << Profile.new(j) }
+    
+    render :index
+  end
 
   private
   
@@ -59,6 +67,10 @@ class ProfilesController < ApplicationController
   # Only allow a trusted parameter "white list" through.
   def profile_params
     params.require(:profile).permit(:name, :email, :tagline, :avatar)
+  end
+  
+  def search_params
+    params.require(:search).permit(:term)
   end
   
   def persist_profile

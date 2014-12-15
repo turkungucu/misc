@@ -14,6 +14,15 @@ module Api
     
         render json: serialize(@profile)
       end
+      
+      # GET /profile/search
+      def search
+        wildcard_search = "%#{params[:term]}%"
+        @profiles = Profile.where("name ILIKE ? OR email ILIKE ? OR tagline ILIKE ? ", wildcard_search, wildcard_search, wildcard_search)
+        output = @profiles.each_with_object([]) {|p, a| a << serialize(p)}
+        
+        render json: output
+      end
     
       # POST /profile/update
       def update

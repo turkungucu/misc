@@ -2,8 +2,10 @@ Rails.application.routes.draw do
   namespace :api, defaults: {format: 'json'} do
     namespace :v1 do
       get  'profiles' => 'profiles#index'
+      get  'profile/search' => 'profiles#search'
       get  'profile/:id' => 'profiles#show', as: :profile
       post 'profile/update' => 'profiles#update'
+      
       get  'avatar/:id' => 'images#show', as: :avatar
       post 'avatar/upload' => 'images#upload'
     end

@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   root 'profiles#index'
   
   get 'avatar/:id' => 'profiles#avatar', as: :avatar
+  get 'search/' => 'profiles#search', as: :search
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
