@@ -78,13 +78,15 @@ class ProfilesController < ApplicationController
     profile_response = RestClient.post "#{api_url}/profile/update", params
     
     if profile_response.success?
-      # build transient object from params
-      @profile = Profile.new(profile_params)
-      @profile.id = params[:id] if params[:id]
-
+      if params[:id] # update
+        @profile = Profile.new(profile_params)
+        @profile.id = params[:id]
+      else # create transient object from response
+        @profile = Profile.new(JSON.parse(profile_response))
+      end
+          
       # persist the avatar
       if file
-        
         f= File.new(file.path, 'rb')
         f.instance_eval do
           def content_type
@@ -100,12 +102,9 @@ class ProfilesController < ApplicationController
         ).execute
         
         @profile.avatar_id = JSON.parse(image_response)[:id]
-        
-        # image_response = RestClient.post("#{base_api_url}/api/v1/avatar/upload", 
-          # {image: {avatar: File.new(file.path, 'rb'), profile_id: @profile.id}}, 
-          # content_type: 'image/jpeg', accept: :json
-        # )
       end
+    else
+      @profile.errors = profile_response
     end
   end
 end

@@ -3,9 +3,8 @@ class Image < ActiveRecord::Base
   
   # Paperclip helper method that associates :avatar attr with a file attachment
   has_attached_file :avatar, styles: {
-    thumb: '100x100>',
-    square: '200x200#',
-    medium: '300x300>'
+    thumb: '100x100#',
+    resized: '1024x1024'
   }
 
   # Validate the attached file is an image
