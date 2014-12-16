@@ -1,6 +1,10 @@
 class Profile < ActiveRecord::Base
   has_one :image
   
+  validates :name, presence: true
+  validates :email, presence: true
+  validates :tagline, presence: true
+  
   before_create :generate_public_id
   
   private

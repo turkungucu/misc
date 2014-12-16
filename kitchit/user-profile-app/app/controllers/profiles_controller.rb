@@ -25,7 +25,7 @@ class ProfilesController < ApplicationController
 
   # POST /profiles
   def create
-    if @profile
+    if !@profile.errors.any?
       redirect_to @profile, notice: 'Profile was successfully created.'
     else
       render :new
@@ -34,7 +34,7 @@ class ProfilesController < ApplicationController
 
   # PATCH/PUT /profiles/:id
   def update
-    if @profile
+    if !@profile.errors.any?
       redirect_to @profile, notice: 'Profile was successfully updated.'
     else
       render :edit
@@ -75,13 +75,14 @@ class ProfilesController < ApplicationController
   
   def persist_profile
     file = profile_params.delete :avatar
-    profile_response = RestClient.post "#{api_url}/profile/update", params
-    
+    profile_response = RestClient.post("#{api_url}/profile/update", params){ |response, request, result| response }
+
     if profile_response.success?
+      # create transient object from params or response
       if params[:id] # update
         @profile = Profile.new(profile_params)
         @profile.id = params[:id]
-      else # create transient object from response
+      else # create
         @profile = Profile.new(JSON.parse(profile_response))
       end
           
@@ -104,7 +105,9 @@ class ProfilesController < ApplicationController
         @profile.avatar_id = JSON.parse(image_response)[:id]
       end
     else
-      @profile.errors = profile_response
+      @profile = Profile.new(profile_params)
+      @profile.id = params[:id]
+      JSON.parse(profile_response).each_pair { |key,value| @profile.errors.add(key,value[0]) }
     end
   end
 end
